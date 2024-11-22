@@ -1,0 +1,388 @@
+use Fresher
+
+select * from Check_userdetails
+
+create table 
+User_Credential(UserId int identity(1,1),
+				Username nvarchar(50) Unique not null,
+				Password nvarchar(30) not null,
+				GroupId int);
+
+select top(10) UserId,Username,Password,Group_id from Check_userdetails
+
+insert into User_Credential
+select top(10) Username,Password,Group_id from Check_userdetails
+
+select * from User_Credential
+select * from Workflowdatas
+
+update User_Credential
+set GroupId =3 where UserId = 10
+
+alter table User_Credential
+add activestatus int,Manager_userid int,Manager_name nvarchar(50),Project_name nvarchar(50),Entered_id int
+
+update User_Credential
+set Manager_userid = 4 where UserId = 2 
+
+select * from Workflowdatas
+drop table Workflowdatas 
+
+
+create table Workflowdatas (projectname Nvarchar(50),client nvarchar(30))
+insert into Workflowdatas (projectname, client)
+values
+('ProjectAlpha', 'Client_A'), 
+('ProjectAlpha', 'Client_B'),
+('ProjectAlpha', 'Client_C'),
+('ProjectAlpha', 'Client_D'),
+('ProjectAlpha', 'Client_E'),
+('ProjectBeta', 'Client1'),
+('ProjectBeta', 'Client2'),
+('ProjectBeta', 'Client3'),
+('ProjectBeta', 'Client4'),
+('ProjectBeta', 'Client5');
+
+update User_Credential
+set Manager_name ='Selsiys' where UserId = 1
+
+select * from User_Credentials
+create table 
+User_Credentials (UserId int ,
+				Username nvarchar(50) not null,
+				Password nvarchar(30) not null,
+				GroupId int ,activestatus int,Manager_userid int,Manager_name nvarchar(50),Project_name nvarchar(50),Entered_id int);
+
+INSERT INTO User_Credentials (UserId, Username, Password, GroupId, activestatus, Manager_userid, Manager_name, Project_name)
+VALUES (1, 'Ragul', '123', 1, 1, 6, 'Selsiya', 'Project_Alpha'),
+	   (1, 'Ragul', '123', 1, 1, 7, 'arav', 'Project_Beta'),
+	   (1, 'Ragul', '123', 1, 1, 8, 'Selsiya', 'Project_Gamma'),
+	   (1, 'Ragul', '123', 1, 1, 9, 'Vivaan', 'Project_Delta'),
+	   (1, 'Ragul', '123', 1, 1, 10, 'Aditya', 'Project_Epsilon'),
+
+	   (2, 'Deepak', '123', 1, 1, 6, 'Selsiya', 'Project_Alpha'),
+	   (2, 'Deepak', '123', 1, 1, 7, 'arav', 'Project_Beta'),
+	   (2, 'Deepak', '123', 1, 1, 8, 'Selsiya', 'Project_Gamma'),
+	   (2, 'Deepak', '123', 1, 1, 9, 'Vivaan', 'Project_Delta'),
+	   (2, 'Deepak', '123', 1, 1, 10, 'Aditya', 'Project_Epsilon')
+
+
+alter table Workflowdatas
+drop column Application
+
+select * from User_Credential
+select * from User_Credentials
+select * from Workflowdatas
+select * from applications
+
+alter table Workflowdatas
+add Workflowdatas varchar(50)
+
+
+update Workflowdatas
+set managername='arav' where projectname='ProjectBeta'
+
+select Manager_name from User_Credentials where Project_name =?
+
+select Project_name from User_Credentials where Manager_name = 'arav'
+
+
+select * from Rp_bookingTable
+
+select * from Rp_signupTable
+
+create table applications (Applictions nvarchar(50))
+insert into applications
+values ('App1'),('App2'),('App3'),('App4'),('App5'),('App6'),('App7'),('App8')
+
+create procedure Getclients_pro (@Project_name varchar(50))
+as
+begin
+	select distinct client from Workflowdatas a join User_Credentials b on(a.Project_name=b.Project_name) 
+where b.Project_name = @Project_name
+end
+
+create table TicketDetail ([S.No] int identity(1,1),
+							Raised_By varchar(30),
+							Raised_Date date, 
+							Project_Name varchar(50), 
+							Client varchar(30),
+							[Application] varchar(30),
+							[Subject] varchar(100),
+							[Description] varchar(1000),
+							[Priority] varchar(40),
+							Assigned_To varchar(50),
+							Operation_Manager varchar(50),
+							ticketid int default(0))
+--drop table TicketDetail
+
+select * from TicketDetail
+select * from User_Credentials
+insert into TicketDetail (Raised_By,Raised_Date,Project_Name,Client,[Application],[Subject],[Description],[Priority],Assigned_To,Operation_Manager)
+exec Ticketraise 'rr','01-02-2003','jj','kk','bb','Introducing Myself','Hi , i am an alien,hahahahaaha ','High','rg','ss'
+
+truncate table TicketDetail
+
+alter procedure Ticketraise (@Raised_By varchar(30),
+							@Raised_Date date, 
+							@Project_Name varchar(50), 
+							@Client varchar(30),
+							@Application varchar(30),
+							@Subject varchar(100),
+							@Description varchar(1000),
+							@Priority varchar(40),
+							@Assigned_To varchar(50),
+							@Operation_Manager varchar(50))
+as
+begin
+	
+	declare @userid int;
+	declare @managerid int;
+	select @userid=UserId from User_Credentials where Username=@Raised_By
+	
+	select @managerid=UserId from User_Credentials where Username = @Operation_Manager
+	
+
+	insert into TicketDetail (Raised_userid,Raised_By,Raised_Date,Project_Name,Client,[Application],[Subject],[Description],[Priority],Assigned_To,Operation_Manager,Manager_userid)	
+	select					@userid,
+							@Raised_By ,
+							@Raised_Date , 
+							@Project_Name , 
+							@Client,
+							@Application,
+							@Subject,
+							@Description ,
+							@Priority ,
+							@Assigned_To ,
+							@Operation_Manager,
+							@managerid
+end
+
+select * from TicketDetail
+alter table TicketDetail
+add Manager_userid int
+
+
+
+
+select Username from User_Credentials where GroupId=4
+--select distinct username from User_Credentials where UserId=1
+--union
+--select username as uk from User_Credential where GroupId=4
+
+--SELECT 
+--    (SELECT distinct username FROM User_Credentials WHERE UserId = 1) AS username,
+--    (SELECT top 1 username FROM User_Credential WHERE GroupId = 4) AS uk;
+
+
+--	SELECT 
+--    uc.Project_name AS username, 
+--     uc2.username AS uk
+--FROM 
+--    (SELECT  distinct Project_name FROM User_Credentials WHERE UserId = 1) uc
+--CROSS JOIN 
+--     (SELECT  distinct username FROM User_Credential WHERE GroupId = 4) uc2;
+
+
+select * from User_Credentials
+
+INSERT INTO User_Credentials (UserId, Username, Password, GroupId, activestatus)
+VALUES (3, 'barath', '1234', 4, 1),
+	   (4, 'ram', '1234', 4, 1 ),
+	   (5, 'rakesh', '123', 4, 1),
+	   (6, 'gokul', '123', 4, 1)
+	   
+select * from TicketDetail where raised_by = ? and ticketid = 0
+
+
+INSERT INTO User_Credentials (UserId, Username, Password, GroupId, activestatus)
+VALUES (7, 'arav', '1234', 2, 1),
+	   (9, 'Vivaan', '1234', 2, 1 ),
+	   (10, 'Aditya', '123', 2, 1)
+
+
+alter table TicketDetail
+add move_on int default(0)
+
+update TicketDetail
+set move_on = 0 where [S.No] in (1,2)
+
+
+select * from TicketDetail
+
+alter PROCEDURE Tickettable (@Userid int, @Groupid int)
+AS
+BEGIN
+   
+    IF 1 = @groupid
+BEGIN
+    SELECT [S.No] , Raised_By, Raised_Date, Project_Name, Client, Application, Subject,
+           Description, Priority, Software_manager, Operation_Manager FROM TicketDetail
+    WHERE raised_userid = @Userid and move_on =0 and status =0
+END
+ELSE IF 2 = @groupid
+BEGIN
+    SELECT [S.No] , Raised_By, Raised_Date, Project_Name, Client, Application, Subject,
+           Description, Priority,Software_manager, Operation_Manager 
+    FROM TicketDetail
+    WHERE move_on = 0 and status=0 and  manager_userid=@Userid 
+END
+ELSE IF 4 = @groupid
+BEGIN
+    -- Add your specific query for groupid = 3 here
+    SELECT [S.No] , Raised_By, Raised_Date, Project_Name, Client, Application, Subject,
+           Description, Priority, Software_manager, Operation_Manager 
+    FROM TicketDetail
+    WHERE move_on = 1 and status = 0
+END
+ELSE
+BEGIN
+    --SELECT [S.No] , Raised_By, Raised_Date, Project_Name, Client, Application, Subject,
+    --       Description, Priority, Software_manager, Operation_Manager 
+    --FROM TicketDetail
+    --WHERE move_on = 2
+	select 'No Ticket found' as message
+
+END
+END
+
+update TicketDetail 
+set move_on=1 where[S.No]=1
+
+exec Tickettable '5','4'
+
+select * from User_Credentials
+SELECT * FROM TicketDetail
+
+
+select * from User_Credentials
+update User_Credentials
+set Username='Selsiya',GroupId=2 where UserId=6 
+
+
+
+select * from TicketDetail
+
+alter PROCEDURE Acceptticket (@sno int, @Groupid int)
+AS
+BEGIN
+  
+    IF 2 = @groupid
+BEGIN
+	update TicketDetail 
+	set move_on =1
+    WHERE [S.No] = @sno
+END
+ELSE IF 4 = @groupid
+BEGIN
+    update TicketDetail 
+	set move_on =2
+    WHERE raised_userid = @sno
+END
+ELSE
+BEGIN
+    update TicketDetail 
+	set move_on =0
+    WHERE raised_userid = @sno
+END
+END
+
+exec Acceptticket 6,2
+
+
+
+select Username from User_Credentials where GroupId =3
+
+
+select * from User_Credentials 
+
+insert into User_Credentials(UserId,Username,Password,GroupId,activestatus)
+select 18,'Rohan',123,3,1
+
+select * from TicketDetail
+
+alter table TicketDetail
+add AssignTo varchar(50)
+
+update TicketDetail
+set status = 0 where [S.No] in (1,5,3,4,6)
+
+
+update TicketDetail set move_on =0 where [S.No] =6
+
+UPDATE TicketDetail set status =2 ,assignto = null where [S.No] =6  
+
+
+select * from TicketDetail
+
+
+alter PROCEDURE Tickettable1 (@tickettype int, @Groupid int)
+AS
+BEGIN
+   
+    IF ((1 = @groupid or 2=@Groupid or 4 =@Groupid or 3=@Groupid ) and (3=@tickettype))
+BEGIN
+    SELECT [S.No] , Raised_By, Raised_Date, Project_Name, Client, Application, Subject,
+           Description, Priority, Software_manager, Operation_Manager FROM TicketDetail
+		   where status=0 and move_on =2
+END
+ELSE IF ((1 = @groupid or 2=@Groupid or 4 =@Groupid or 3=@Groupid ) and (2=@tickettype))
+BEGIN
+    SELECT [S.No] , Raised_By, Raised_Date, Project_Name, Client, Application, Subject,
+           Description, Priority,Software_manager, Operation_Manager 
+    FROM TicketDetail where move_on=0 and status=2
+    
+END
+ELSE IF ((1 = @groupid or 2=@Groupid or 4 =@Groupid or 3=@Groupid ) and (1=@tickettype))
+BEGIN
+    
+    SELECT [S.No] , Raised_By, Raised_Date, Project_Name, Client, Application, Subject,
+           Description, Priority, Software_manager, Operation_Manager 
+    FROM TicketDetail
+    WHERE move_on = 1 and status = 1 and ISNULL(AssignTo,'')<>''
+END
+ELSE
+BEGIN
+    SELECT 'No datas' as message
+
+END
+END
+
+
+select * from TicketDetail
+
+
+alter PROCEDURE Rejectticket (@sno int, @Groupid int)
+AS
+BEGIN
+  
+    IF 2 = @groupid
+BEGIN
+	update TicketDetail 
+	set move_on =0,status=2
+    WHERE [S.No] = @sno
+END
+ELSE IF 4 = @groupid
+BEGIN
+    update TicketDetail 
+	set move_on = 2 , status = 0 ,AssignTo = null
+    WHERE [S.No] = @sno
+END
+ELSE
+BEGIN
+   select 'Error Rejecting' as message
+END
+END
+
+
+
+
+
+
+
+
+
+
+
+
+
